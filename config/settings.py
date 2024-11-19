@@ -43,6 +43,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    
+    'whitenoise.runserver_nostatic',
     'accounts',
     'rest_framework',
     'rest_framework.authtoken',
@@ -166,7 +168,7 @@ CORS_ALLOWED_ORIGINS = [
     "https://market-bot-production.up.railway.app",
     "https://teachapp-production.up.railway.app"
 ]
-
+STATICFILES_STORAGE = 'django.contrib.staticfiles.storage.ManifestStaticFilesStorage'
 
 CORS_ALLOW_METHODS = [
     "GET",
