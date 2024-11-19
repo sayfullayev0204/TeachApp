@@ -9,3 +9,4 @@ pillow==10.4.0
 #back end uchun
 djangorestframework==3.15.1
 django-cors-headers==4.3.1
+drf-yasg==1.21.7
