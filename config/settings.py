@@ -158,7 +158,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
 CORS_ALLOWED_ORIGINS = [
     "http://127.0.0.1:8000",
     "https://market-bot-fpv8.onrender.com",
-    "https://market-bot-production.up.railway.app"
+    "https://market-bot-production.up.railway.app",
+    "https://teachapp-production.up.railway.app"
 ]
 
 
