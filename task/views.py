@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from .models import Question, Answer
 from .serializers import QuestionSerializer, AnswerSerializer
-
+from django.http import HttpResponse
 class QuestionListCreateAPIView(generics.ListCreateAPIView):
     queryset = Question.objects.all()
     serializer_class = QuestionSerializer
@@ -45,3 +45,6 @@ class QuestionDetailAPIView(generics.RetrieveAPIView):
             'answers': answer_serializer.data,
         }
         return Response(response_data)
+
+def py(request):
+    return HttpResponse("Hello, world. 86c34004 is the polls index.")
