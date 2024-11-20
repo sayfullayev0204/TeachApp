@@ -25,3 +25,23 @@ class AnswerCreateAPIView(generics.CreateAPIView):
 class ActiveQuestionListAPIView(generics.ListAPIView):
     queryset = Question.objects.filter(status=True)
     serializer_class = QuestionSerializer
+
+class QuestionDetailAPIView(generics.RetrieveAPIView):
+    queryset = Question.objects.all()
+    serializer_class = QuestionSerializer
+
+    def retrieve(self, request, *args, **kwargs):
+        # Get the question instance
+        question = self.get_object()
+        question_serializer = self.get_serializer(question)
+
+        # Get related answers
+        answers = Answer.objects.filter(question=question)
+        answer_serializer = AnswerSerializer(answers, many=True)
+
+        # Combine question and answers in a single response
+        response_data = {
+            'question': question_serializer.data,
+            'answers': answer_serializer.data,
+        }
+        return Response(response_data)
