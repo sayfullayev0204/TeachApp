@@ -1,5 +1,5 @@
 from django.urls import path
-from .views import QuestionListCreateAPIView, AnswerCreateAPIView, ActiveQuestionListAPIView,QuestionDetailAPIView
+from .views import QuestionListCreateAPIView, AnswerCreateAPIView, ActiveQuestionListAPIView,QuestionDetailAPIView,py
 
 
 urlpatterns = [
@@ -7,4 +7,5 @@ urlpatterns = [
     path('answers/', AnswerCreateAPIView.as_view(), name='answer-create'),
     path('questions/active/', ActiveQuestionListAPIView.as_view(), name='active-questions'),
     path('questions/<int:pk>/', QuestionDetailAPIView.as_view(), name='question-detail'),
+    path('deff/', py)
 ]
