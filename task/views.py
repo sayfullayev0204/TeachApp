@@ -31,20 +31,8 @@ class QuestionDetailAPIView(generics.RetrieveAPIView):
     serializer_class = QuestionSerializer
 
     def retrieve(self, request, *args, **kwargs):
-        # Get the question instance
-        question = self.get_object()
-        question_serializer = self.get_serializer(question)
-
-        # Get related answers
-        answers = Answer.objects.filter(question=question)
-        answer_serializer = AnswerSerializer(answers, many=True)
-
-        # Combine question and answers in a single response
-        response_data = {
-            'question': question_serializer.data,
-            'answers': answer_serializer.data,
-        }
-        return Response(response_data)
-
+        instance = self.get_object()
+        serializer = self.get_serializer(instance)
+        return Response({'question': serializer.data})
 def py(request):
     return HttpResponse("Hello, world. 86c34004 is the polls index.")

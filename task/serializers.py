@@ -1,15 +1,17 @@
 from rest_framework import serializers
 from .models import Question, Answer
 
-class QuestionSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Question
-        fields = ['category', 'title', 'image', 'status']
-        extra_kwargs = {
-            'image': {'required': True}  # Make sure `image` is required if it must be sent with the POST request
-        }
-            
 class AnswerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Answer
-        fields = '__all__'
+        fields = ['id', 'title', 'image', 'created_at', 'question']
+
+class QuestionSerializer(serializers.ModelSerializer):
+    answers = AnswerSerializer(many=True, read_only=True, source='answer_set')
+
+    class Meta:
+        model = Question
+        fields = ['id', 'category', 'title', 'image', 'status', 'answers']
+        extra_kwargs = {
+            'image': {'required': True},  # Ensure `image` is required
+        }

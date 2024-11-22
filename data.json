@@ -1,0 +1,18 @@
+{
+    "question": {
+        "id": 1,
+        "category": "1-sinf",
+        "title": "Nimadur",
+        "image": "http://127.0.0.1:8000/media/tasks/02-style.png",
+        "status": true
+        "answers": [
+            {
+                "id": 1,
+                "title": "Javob berildi",
+                "image": "http://127.0.0.1:8000/media/answer/photo_2024-11-22_09-11-08.jpg",
+                "created_at": "2024-11-22T04:11:53.595793Z",
+                "question": 1
+            }
+        ]
+    }
+}
