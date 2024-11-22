@@ -69,6 +69,7 @@ class Question(models.Model):
     image = models.ImageField(upload_to='tasks/')
     created_at = models.DateTimeField(auto_now_add=True)
     status = models.BooleanField(default=True)
+    image_url = models.TextField(blank=True)
 
     def __str__(self):
         return self.title
@@ -77,5 +78,6 @@ class Answer(models.Model):
     title = models.CharField(max_length=300)
     image = models.ImageField(upload_to='answer/')
     created_at = models.DateTimeField(auto_now=True)
+    image_url = models.TextField(blank=True)
     def __str__(self):
         return self.title
