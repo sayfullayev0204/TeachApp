@@ -1,49 +1,63 @@
-# from django.contrib.auth.models import User
-# from django.contrib.auth import  login, logout
-# from rest_framework.response import Response
-# from rest_framework.decorators import api_view
-# from rest_framework import status
-# from rest_framework_simplejwt.tokens import RefreshToken
+from rest_framework.views import APIView
+from rest_framework.response import Response
+from rest_framework import status
+from django.contrib.auth.hashers import make_password
+from .models import User
+from .serializers import UserSerializer
 
-# # Ro'yxatdan o'tish
-# @api_view(['POST'])
-# def register(request):
-#     username = request.data.get('username')
-#     password = request.data.get('password')
 
-#     if User.objects.filter(username=username).exists():
-#         return Response({'error': 'Bu foydalanuvchi allaqachon mavjud!'}, status=status.HTTP_400_BAD_REQUEST)
+class RegisterAPIView(APIView):
+    """
+    API endpoint for user registration without requiring tokens.
+    """
 
-#     user = User.objects.create_user(username=username, password=password)
-#     return Response({'message': 'Foydalanuvchi muvaffaqiyatli ro\'yxatdan o\'tdi!'})
+    def post(self, request, *args, **kwargs):
+        data = request.data
 
-# @api_view(['POST'])
-# def login_view(request):
-#     username = request.data.get('username')
-#     password = request.data.get('password')
+        # Required fields for user registration
+        required_fields = ["username", "password", "first_name", "last_name", "role"]
+        missing_fields = [field for field in required_fields if field not in data]
 
-#     if not username:
-#         return Response({'error': 'Username kiritilmagan!'}, status=status.HTTP_400_BAD_REQUEST)
+        if missing_fields:
+            return Response(
+                {"error": f"Missing fields: {', '.join(missing_fields)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-#     if not User.objects.filter(username=username).exists():
-#         return Response({'error': 'Bunday foydalanuvchi mavjud emas!'}, status=status.HTTP_404_NOT_FOUND)
+        # Validate role field
+        valid_roles = [choice[0] for choice in User.ROLE_CHOICES]
+        if data.get("role") not in valid_roles:
+            return Response(
+                {"error": f"Invalid role. Valid roles are: {', '.join(valid_roles)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-#     if not password:
-#         return Response({'error': 'Parol kiritilmagan!'}, status=status.HTTP_400_BAD_REQUEST)
+        # Check if username is already taken
+        if User.objects.filter(username=data["username"]).exists():
+            return Response(
+                {"error": "Username is already taken."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
-#     user = User.objects.get(username=username)
-#     if not user.check_password(password):
-#         return Response({'error': 'Parol noto\'g\'ri!'}, status=status.HTTP_400_BAD_REQUEST)
+        try:
+            # Create a new user
+            user = User.objects.create(
+                username=data["username"],
+                password=make_password(data["password"]),
+                first_name=data["first_name"],
+                last_name=data["last_name"],
+                role=data["role"],
+            )
 
-#     login(request, user)
-#     refresh = RefreshToken.for_user(user)
-#     return Response({
-#         'message': 'Tizimga muvaffaqiyatli kirildi!',
-#         'refresh': str(refresh),
-#         'access': str(refresh.access_token)
-#     })
-# # Tizimdan chiqish
-# @api_view(['POST'])
-# def logout_view(request):
-#     logout(request)
-#     return Response({'message': 'Tizimdan chiqildi!'}, status=status.HTTP_200_OK)
+            # Serialize and return the user data
+            serializer = UserSerializer(user)
+
+            return Response(
+                {"message": "User registered successfully", "user": serializer.data},
+                status=status.HTTP_201_CREATED,
+            )
+        except Exception as e:
+            return Response(
+                {"error": f"Failed to register user: {str(e)}"},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
