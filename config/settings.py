@@ -50,13 +50,15 @@ INSTALLED_APPS = [
     'rest_framework',
     'rest_framework.authtoken',
     'task',
-    'drf_yasg'
+    'drf_yasg',
+    'corsheaders'
 ]
 
 
 
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -209,7 +211,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "https://mahalla-0z5h.onrender.com",
-    "https://teachapp-production.up.railway.app/",
+    "https://teachapp-production.up.railway.app",
     "http://127.0.0.1:8000",
 ]
 
