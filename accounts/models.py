@@ -15,7 +15,7 @@ class User(AbstractUser):
     last_login = models.DateTimeField(auto_now=True)
 
 
-    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="Student")
+    role = models.CharField(max_length=10, choices=ROLE_CHOICES, default="Student", blank=True)
 
     def __str__(self) -> str:
         return f"{self.username} - {self.role}"

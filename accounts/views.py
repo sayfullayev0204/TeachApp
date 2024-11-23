@@ -15,7 +15,7 @@ class RegisterAPIView(APIView):
         data = request.data
 
         # Required fields for user registration
-        required_fields = ["username", "password", "first_name", "last_name", "role"]
+        required_fields = ["username", "password", "first_name", "last_name"]
         missing_fields = [field for field in required_fields if field not in data]
 
         if missing_fields:
@@ -24,13 +24,7 @@ class RegisterAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST,
             )
 
-        # Validate role field
-        valid_roles = [choice[0] for choice in User.ROLE_CHOICES]
-        if data.get("role") not in valid_roles:
-            return Response(
-                {"error": f"Invalid role. Valid roles are: {', '.join(valid_roles)}"},
-                status=status.HTTP_400_BAD_REQUEST,
-            )
+
 
         # Check if username is already taken
         if User.objects.filter(username=data["username"]).exists():
@@ -46,7 +40,6 @@ class RegisterAPIView(APIView):
                 password=make_password(data["password"]),
                 first_name=data["first_name"],
                 last_name=data["last_name"],
-                role=data["role"],
             )
 
             # Serialize and return the user data
