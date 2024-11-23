@@ -209,7 +209,7 @@ SIMPLE_JWT = {
 
 CORS_ALLOWED_ORIGINS = [
     "https://mahalla-0z5h.onrender.com",
-    "https://sub.example.com",
+    "https://teachapp-production.up.railway.app/",
     "http://127.0.0.1:8000",
 ]
 
