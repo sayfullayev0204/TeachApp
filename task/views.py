@@ -1,38 +1,42 @@
-from rest_framework import generics, permissions,status
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 from .models import Question, Answer
 from .serializers import QuestionSerializer, AnswerSerializer
-from django.http import HttpResponse
-class QuestionListCreateAPIView(generics.ListCreateAPIView):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
 
-    def post(self, request, *args, **kwargs):
-        # Handle file uploads
-        data = request.data
-        data['image'] = request.FILES.get('image', None)  # Get uploaded file if present
-        serializer = self.get_serializer(data=data)
+class QuestionListCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request):
+        questions = Question.objects.filter(user=request.user)
+        serializer = QuestionSerializer(questions, many=True)
+        return Response(serializer.data)
+
+    def post(self, request):
+        data = request.data.copy()
+        data['user'] = request.user.id
+        serializer = QuestionSerializer(data=data)
         if serializer.is_valid():
             serializer.save()
-            return Response(serializer.data, status=status.HTTP_201_CREATED)
-        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
-    
-class AnswerCreateAPIView(generics.CreateAPIView):
-    queryset = Answer.objects.all()
-    serializer_class = AnswerSerializer
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)
 
-class ActiveQuestionListAPIView(generics.ListAPIView):
-    queryset = Question.objects.filter(status=True)
-    serializer_class = QuestionSerializer
+class AnswerListCreateAPIView(APIView):
+    permission_classes = [IsAuthenticated]
 
-class QuestionDetailAPIView(generics.RetrieveAPIView):
-    queryset = Question.objects.all()
-    serializer_class = QuestionSerializer
+    def get(self, request, question_id):
+        # Get answers related to a specific question
+        answers = Answer.objects.filter(question__id=question_id)
+        serializer = AnswerSerializer(answers, many=True)
+        return Response(serializer.data)
 
-    def retrieve(self, request, *args, **kwargs):
-        instance = self.get_object()
-        serializer = self.get_serializer(instance)
-        return Response({'question': serializer.data})
-def py(request):
-    return HttpResponse("Hello, world. 86c34004 is the polls index.")
+    def post(self, request, question_id):
+        # Add the authenticated user and associate the answer with a question
+        data = request.data.copy()
+        data['user'] = request.user.id
+        data['question'] = question_id
+        serializer = AnswerSerializer(data=data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data, status=201)
+        return Response(serializer.errors, status=400)

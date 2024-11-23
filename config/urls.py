@@ -5,11 +5,7 @@ from django.contrib import admin
 from django.urls import path, include
 from django.conf import settings  # setting.py ni import qildik
 from django.conf.urls.static import static
-from rest_framework_simplejwt.views import (
-    TokenObtainPairView,
-    TokenRefreshView,
-    TokenVerifyView,
-)
+
 
 schema_view = get_schema_view(
     openapi.Info(
@@ -26,7 +22,7 @@ schema_view = get_schema_view(
 
 urlpatterns = [
     path("admin/", admin.site.urls),
-    path("app", include("task.urls")),
+    path("app/", include("task.urls")),
     path("accounts/", include("accounts.urls")),
     # API documentation
     path(
