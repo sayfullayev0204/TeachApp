@@ -22,3 +22,11 @@ class Answer(models.Model):
     def __str__(self):
         return self.title
 
+    def save(self, *args, **kwargs):
+        # Set the question's status to True when an answer is created
+        if not self.pk:  # Only update status if this is a new answer
+            self.question.status = True
+            self.question.save()
+        super().save(*args, **kwargs)
+
+
