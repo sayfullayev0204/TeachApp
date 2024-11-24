@@ -14,12 +14,13 @@ class QuestionListCreateAPIView(APIView):
 
     def post(self, request):
         data = request.data.copy()
-        data['user'] = request.user.id
-        serializer = QuestionSerializer(data=data)
+        data['user'] = request.user.id  # Foydalanuvchini autentifikatsiyadan kelgan ma'lumotga sozlash
+        serializer = QuestionSerializer(data=data, context={'request': request})
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
 
 class AnswerListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
