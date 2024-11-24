@@ -2,7 +2,7 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.permissions import IsAuthenticated
 from .models import Question, Answer
-from .serializers import QuestionSerializer, AnswerSerializer
+from .serializers import QuestionSerializer, AnswerSerializer,QuestionDetailSerializer
 
 class QuestionListCreateAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -41,3 +41,14 @@ class AnswerListCreateAPIView(APIView):
             serializer.save()
             return Response(serializer.data, status=201)
         return Response(serializer.errors, status=400)
+
+class QuestionDetailAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, pk):
+        try:
+            question = Question.objects.prefetch_related('answers').get(pk=pk, user=request.user)
+            serializer = QuestionDetailSerializer(question)
+            return Response(serializer.data)
+        except Question.DoesNotExist:
+            return Response({'error': 'Question not found'}, status=404)

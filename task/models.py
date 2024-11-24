@@ -12,11 +12,13 @@ class Question(models.Model):
         return self.title
     
 class Answer(models.Model):
-    question = models.ForeignKey(Question, on_delete=models.CASCADE)
+    question = models.ForeignKey(Question, related_name='answers', on_delete=models.CASCADE)
     title = models.CharField(max_length=300)
     image = models.ImageField(upload_to='answer/')
     created_at = models.DateTimeField(auto_now=True)
     image_url = models.TextField(blank=True)
     user = models.ForeignKey(User, on_delete=models.CASCADE)
+
     def __str__(self):
         return self.title
+

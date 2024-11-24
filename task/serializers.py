@@ -15,8 +15,13 @@ class QuestionSerializer(serializers.ModelSerializer):
         return super().create(validated_data)
 
 class AnswerSerializer(serializers.ModelSerializer):
-    user = serializers.StringRelatedField(read_only=True)  # Display username instead of ID
-
     class Meta:
         model = Answer
-        fields = ['id', 'question', 'title', 'image', 'created_at', 'image_url', 'user']
+        fields = ['id', 'title', 'image', 'created_at', 'question']
+
+class QuestionDetailSerializer(serializers.ModelSerializer):
+    answers = AnswerSerializer(many=True, read_only=True)  # Related `answers` field
+
+    class Meta:
+        model = Question
+        fields = ['id', 'title', 'image', 'status', 'created_at', 'answers']
