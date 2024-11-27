@@ -4,6 +4,7 @@ from rest_framework import status
 from django.contrib.auth.hashers import make_password
 from .models import User
 from .serializers import UserSerializer
+from rest_framework.permissions import IsAuthenticated
 
 
 class RegisterAPIView(APIView):
@@ -54,3 +55,13 @@ class RegisterAPIView(APIView):
                 {"error": f"Failed to register user: {str(e)}"},
                 status=status.HTTP_400_BAD_REQUEST,
             )
+class ProfileAPIView(APIView):
+    """
+    API endpoint for retrieving the profile of the logged-in user using JWT.
+    """
+    permission_classes = [IsAuthenticated]
+
+    def get(self, request, *args, **kwargs):
+        user = request.user  # The authenticated user from the JWT token
+        serializer = UserSerializer(user)
+        return Response(serializer.data, status=status.HTTP_200_OK)
